@@ -92,16 +92,19 @@
                 </div>
 
                 <style>
-                    .document-email-modal {
+                    #document-email-modal.document-email-modal {
                         position: fixed;
                         top: 0;
                         left: 0;
                         width: 100%;
                         height: 100%;
                         z-index: 99999;
-                        display: flex;
+                        display: none !important;
                         align-items: center;
                         justify-content: center;
+                    }
+                    #document-email-modal.document-email-modal.is-visible {
+                        display: flex !important;
                     }
                     .document-email-modal-overlay {
                         position: absolute;
@@ -225,22 +228,22 @@
                                 hiddenField.value = fileUrl;
                             }
 
-                            modal.style.display = 'flex';
+                            modal.classList.add('is-visible');
                         });
                     });
 
                     closeBtn.addEventListener('click', function() {
-                        modal.style.display = 'none';
+                        modal.classList.remove('is-visible');
                     });
                     overlay.addEventListener('click', function() {
-                        modal.style.display = 'none';
+                        modal.classList.remove('is-visible');
                     });
 
                     if (typeof jQuery !== 'undefined') {
                         jQuery(document).on('gform_confirmation_loaded', function(event, formId) {
                             if (formId == gateFormId) {
                                 setTimeout(function() {
-                                    modal.style.display = 'none';
+                                    modal.classList.remove('is-visible');
                                 }, 3000);
                             }
                         });
