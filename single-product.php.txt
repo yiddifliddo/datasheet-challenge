@@ -1,0 +1,176 @@
+<?php get_header(); ?>
+
+<div class="product-detail-container">
+	<?php if ( function_exists( 'abs_breadcrumbs_output' ) ) abs_breadcrumbs_output(); ?>
+    <section class="section top-section">
+        <div class="section-content">
+            <div class="image-document-column">
+                <?php
+                $listing_image = get_field('listing_image');
+
+                if( $listing_image ):
+                    ?>
+                        <div class="single-slide">
+                            <img class="single-slide-image" src="<?php echo esc_url($listing_image['url']); ?>" alt="<?php echo esc_attr($listing_image['alt']); ?>" title="<?php echo esc_attr($listing_image['title']); ?>">
+                            
+                            <?php if( have_rows('related_images') ): ?>
+                                <?php while( have_rows('related_images') ): the_row(); 
+                                    $image = get_sub_field('image');
+                                    if( $image ): ?>
+                                        <img class="single-slide-image" src="<?php echo esc_url($image['url']); ?>" alt="<?php echo esc_attr($image['alt']); ?>" title="<?php echo esc_attr($image['title']); ?>">
+                                    <?php endif; ?>
+                                <?php endwhile; ?>
+                            <?php endif; ?>
+                        </div>
+
+                        <div class="slider-nav">
+                            <div class="image-thumbnail">
+                                <img src="<?php echo esc_url($listing_image['sizes']['thumbnail']); ?>" alt="<?php echo esc_attr($listing_image['alt']); ?>" title="<?php echo esc_attr($listing_image['title']); ?>">
+                            </div>
+
+                            <?php if( have_rows('related_images') ): ?>
+                                <?php while( have_rows('related_images') ): the_row(); 
+                                    $image = get_sub_field('image');
+                                    if( $image ): ?>
+                                        <div class="image-thumbnail">
+                                            <img src="<?php echo esc_url($image['sizes']['thumbnail']); ?>" alt="<?php echo esc_attr($image['alt']); ?>" title="<?php echo esc_attr($image['title']); ?>">
+                                        </div>
+                                    <?php endif; ?>
+                                <?php endwhile; ?>
+                            <?php endif; ?>
+                        </div>
+                    <?php
+                endif;
+                ?>
+
+                <?php 
+                if( have_rows('related_documents_or_other_files') ): ?>
+                    <div class="document-dropdown-div">
+                        <button class="button js-document-dropdown">
+                            <div class="text-div">View / Print Product Information</div>
+                            <div class="icon-div">
+                                <svg class="icon icon-document-download"><use xlink:href="#icon-document-download"></use></svg>
+                            </div>
+                            <div class="arrow-div"></div>
+                        </button>
+
+                        <div class="dropdown-body" style="display: none;">
+                            <?php while( have_rows('related_documents_or_other_files') ): the_row(); 
+                                $label = get_sub_field('label');
+                                $file = get_sub_field('file');
+                                if( $file ): ?>
+                                    <a class="document-link dropdown-item" href="<?php echo esc_url($file['url']); ?>" target="_blank" rel="noopener noreferrer">
+                                        <?php echo esc_html($label); ?>
+                                    </a>
+                                <?php endif; ?>
+                            <?php endwhile; ?>
+                        </div>
+                    </div>
+                <?php endif; ?>
+            </div>
+            <div class="title-description-column">
+                <h1 class="product-title"><?php the_field('product_title'); ?></h1>
+                <div class="product-number"> Product Number: <span><?php the_field('product_id'); ?></span>
+                    <?php if (get_field('is_new_product')) : ?>
+                        <span class="new-product-badge"><span class="star">★</span> NEW PRODUCT</span>
+                    <?php endif; ?>
+					<?php if ( function_exists( 'abs_available_sizes_output' ) ) abs_available_sizes_output(); ?>
+                </div>
+				
+                <div class="product-summary"><?php the_field('summary'); ?></div>
+				
+				<?php echo do_shortcode('[quote_button]'); ?>
+				
+                <div class="product-quote">
+                    <?php /*<a href="/request-a-quote" class="product-quote-button button">Request a Quote</a>*/ ?>
+					<a href="#product_inquiry_div" class="i_scroll_to product_inquiry_button button is-outline primary">Product Inquiry</a>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="section">
+        <div class="section-content relative">
+            <div class="row">
+                <div class="col small-12 large-12">
+                    <div class="col-inner">
+                        <div class="tab-panel-section" id="tab-parent">
+                            <div class="tab-container">
+                                <?php $maxTabs = 3; ?>
+                                <?php for ($i = 1; $i <= $maxTabs; $i++): ?>
+                                    <?php if (get_field("tab_${i}_title")): ?>
+                                        <a class="tab <?php echo $i === 1 ? 'active' : ''; ?>" href="#tab-pane<?php echo $i; ?>" data-toggle="tab" data-parent="tab-parent" data-target="tab-pane<?php echo $i; ?>" id="data-toggle-<?php echo $i - 1; ?>" role="button" aria-haspopup="true" aria-expanded="<?php echo $i === 1 ? 'true' : 'false'; ?>">
+                                            <span><?php the_field("tab_${i}_title"); ?></span>
+                                        </a>
+                                    <?php endif; ?>
+                                <?php endfor; ?>
+                            </div>
+                            <div class="panel-container">
+                                <?php for ($i = 1; $i <= $maxTabs; $i++): ?>
+                                    <?php if (get_field("tab_${i}_content")): ?>
+                                        <div class="panel <?php echo $i === 1 ? 'active' : ''; ?>" id="tab-pane<?php echo $i; ?>" aria-labelledby="data-toggle-<?php echo $i - 1; ?>">
+                                            <?php the_field("tab_${i}_content"); ?>
+                                        </div>
+                                    <?php endif; ?>
+                                <?php endfor; ?>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+				
+					<?php
+		$related_products = get_field('related_products');
+
+		if ( $related_products ) : ?>
+			<section class="section related-products-section">
+				<div class="section-content">
+					<h2 class="related-products-title">Related Products</h2>
+
+					<div class="related-products-carousel">
+						<?php foreach ( $related_products as $post ) : setup_postdata( $post ); ?>
+							<?php
+								$listing_image = get_field('listing_image');
+								$product_id    = get_field('product_id');
+							?>
+							<div class="related-product-item">
+								<a href="<?php the_permalink(); ?>" class="related-product-link">
+									<div class="related-product-image-wrap">
+										<?php if ( $listing_image ) : ?>
+											<img src="<?php echo esc_url( $listing_image['sizes']['icetro-251'] ?? $listing_image['url'] ); ?>"
+												 alt="<?php echo esc_attr( $listing_image['alt'] ); ?>">
+										<?php endif; ?>
+									</div>
+									<div class="related-product-content">
+										<div class="related-product-title"><?php the_title(); ?></div>
+										<?php if ( $product_id ) : ?>
+											<div class="related-product-number">Product Number: <span><?php echo esc_html( $product_id ); ?></span></div>
+										<?php endif; ?>
+									</div>
+								</a>
+							</div>
+						<?php endforeach; ?>
+						<?php wp_reset_postdata(); ?>
+					</div>
+				</div>
+			</section>
+		<?php endif; ?>
+				
+				
+                <div class="col small-12 large-12">
+                    <div class="col-inner">
+					<?php
+					//if( $_SERVER['REMOTE_ADDR'] == '5.77.201.39' ){}
+					?>
+						<div id="product_inquiry_div" class="product_inquiry_div">
+						<h2>Inquire About This Product</h2>
+						<?php 
+						echo do_shortcode('[gravityform id="5" title="false" description="false" ajax="false"]');
+						?>
+						</div>
+					</div>
+				</div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<?php get_footer(); ?>
