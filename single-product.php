@@ -43,7 +43,7 @@
                 endif;
                 ?>
 
-                <?php 
+                <?php
                 if( have_rows('related_documents_or_other_files') ): ?>
                     <div class="document-dropdown-div">
                         <button class="button js-document-dropdown">
@@ -55,11 +55,11 @@
                         </button>
 
                         <div class="dropdown-body" style="display: none;">
-                            <?php while( have_rows('related_documents_or_other_files') ): the_row(); 
+                            <?php while( have_rows('related_documents_or_other_files') ): the_row();
                                 $label = get_sub_field('label');
                                 $file = get_sub_field('file');
                                 if( $file ): ?>
-                                    <a class="document-link dropdown-item" href="<?php echo esc_url($file['url']); ?>" target="_blank" rel="noopener noreferrer">
+                                    <a class="document-link dropdown-item js-document-gate" href="#" data-file-url="<?php echo esc_url($file['url']); ?>" data-file-label="<?php echo esc_attr($label); ?>">
                                         <?php echo esc_html($label); ?>
                                     </a>
                                 <?php endif; ?>
@@ -67,6 +67,109 @@
                         </div>
                     </div>
                 <?php endif; ?>
+
+                <!-- Email Gate Modal -->
+                <div id="document-email-modal" class="document-email-modal" style="display:none;">
+                    <div class="document-email-modal-overlay"></div>
+                    <div class="document-email-modal-content">
+                        <button class="document-email-modal-close" aria-label="Close">&times;</button>
+                        <h3>Enter your email to receive this document</h3>
+                        <p class="document-email-modal-label"></p>
+                        <?php echo do_shortcode('[gravityform id="6" title="false" description="false" ajax="true"]'); ?>
+                    </div>
+                </div>
+
+                <style>
+                    .document-email-modal {
+                        position: fixed;
+                        top: 0;
+                        left: 0;
+                        width: 100%;
+                        height: 100%;
+                        z-index: 99999;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                    }
+                    .document-email-modal-overlay {
+                        position: absolute;
+                        top: 0;
+                        left: 0;
+                        width: 100%;
+                        height: 100%;
+                        background: rgba(0,0,0,0.6);
+                    }
+                    .document-email-modal-content {
+                        position: relative;
+                        background: #fff;
+                        padding: 30px;
+                        border-radius: 8px;
+                        max-width: 500px;
+                        width: 90%;
+                        z-index: 1;
+                    }
+                    .document-email-modal-close {
+                        position: absolute;
+                        top: 10px;
+                        right: 15px;
+                        background: none;
+                        border: none;
+                        font-size: 24px;
+                        cursor: pointer;
+                        color: #333;
+                    }
+                    .document-email-modal-label {
+                        font-weight: 600;
+                        margin-bottom: 15px;
+                    }
+                </style>
+
+                <script>
+                (function() {
+                    var modal = document.getElementById('document-email-modal');
+                    var modalLabel = modal.querySelector('.document-email-modal-label');
+                    var closeBtn = modal.querySelector('.document-email-modal-close');
+                    var overlay = modal.querySelector('.document-email-modal-overlay');
+
+                    // When a gated document link is clicked, show the modal and set the hidden field
+                    document.querySelectorAll('.js-document-gate').forEach(function(link) {
+                        link.addEventListener('click', function(e) {
+                            e.preventDefault();
+                            var fileUrl = this.getAttribute('data-file-url');
+                            var fileLabel = this.getAttribute('data-file-label');
+
+                            modalLabel.textContent = fileLabel;
+
+                            // Set the hidden field value in the Gravity Form (field ID 2 = hidden document URL field)
+                            var hiddenField = modal.querySelector('input[name="input_2"]');
+                            if (hiddenField) {
+                                hiddenField.value = fileUrl;
+                            }
+
+                            modal.style.display = 'flex';
+                        });
+                    });
+
+                    // Close modal
+                    closeBtn.addEventListener('click', function() {
+                        modal.style.display = 'none';
+                    });
+                    overlay.addEventListener('click', function() {
+                        modal.style.display = 'none';
+                    });
+
+                    // Close modal after successful Gravity Forms AJAX submission
+                    if (typeof jQuery !== 'undefined') {
+                        jQuery(document).on('gform_confirmation_loaded', function(event, formId) {
+                            if (formId == 6) {
+                                setTimeout(function() {
+                                    modal.style.display = 'none';
+                                }, 3000);
+                            }
+                        });
+                    }
+                })();
+                </script>
             </div>
             <div class="title-description-column">
                 <h1 class="product-title"><?php the_field('product_title'); ?></h1>
