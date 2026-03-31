@@ -71,6 +71,36 @@ class Datasheet_Email_Gate_Settings {
             'default'           => true,
         ) );
 
+        register_setting( self::OPTION_GROUP, 'deg_schedule_enabled', array(
+            'type'              => 'boolean',
+            'sanitize_callback' => 'rest_sanitize_boolean',
+            'default'           => false,
+        ) );
+
+        register_setting( self::OPTION_GROUP, 'deg_schedule_start', array(
+            'type'              => 'string',
+            'sanitize_callback' => 'sanitize_text_field',
+            'default'           => '09:00',
+        ) );
+
+        register_setting( self::OPTION_GROUP, 'deg_schedule_end', array(
+            'type'              => 'string',
+            'sanitize_callback' => 'sanitize_text_field',
+            'default'           => '17:00',
+        ) );
+
+        register_setting( self::OPTION_GROUP, 'deg_schedule_timezone', array(
+            'type'              => 'string',
+            'sanitize_callback' => 'sanitize_text_field',
+            'default'           => '',
+        ) );
+
+        register_setting( self::OPTION_GROUP, 'deg_schedule_days', array(
+            'type'              => 'array',
+            'sanitize_callback' => array( $this, 'sanitize_days' ),
+            'default'           => array( 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun' ),
+        ) );
+
         add_settings_section(
             'deg_main_section',
             'Configuration',
@@ -117,6 +147,57 @@ class Datasheet_Email_Gate_Settings {
             self::PAGE_SLUG,
             'deg_main_section'
         );
+
+        // Schedule section
+        add_settings_section(
+            'deg_schedule_section',
+            'Schedule',
+            array( $this, 'render_schedule_section_description' ),
+            self::PAGE_SLUG
+        );
+
+        add_settings_field(
+            'deg_schedule_enabled',
+            'Enable Schedule',
+            array( $this, 'render_schedule_enabled_field' ),
+            self::PAGE_SLUG,
+            'deg_schedule_section'
+        );
+
+        add_settings_field(
+            'deg_schedule_times',
+            'Active Hours',
+            array( $this, 'render_schedule_times_field' ),
+            self::PAGE_SLUG,
+            'deg_schedule_section'
+        );
+
+        add_settings_field(
+            'deg_schedule_timezone',
+            'Timezone',
+            array( $this, 'render_schedule_timezone_field' ),
+            self::PAGE_SLUG,
+            'deg_schedule_section'
+        );
+
+        add_settings_field(
+            'deg_schedule_days',
+            'Active Days',
+            array( $this, 'render_schedule_days_field' ),
+            self::PAGE_SLUG,
+            'deg_schedule_section'
+        );
+    }
+
+    /**
+     * Sanitize days array.
+     */
+    public function sanitize_days( $input ) {
+        if ( ! is_array( $input ) ) {
+            return array( 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun' );
+        }
+        $valid = array( 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun' );
+        return array_values( array_intersect( $input, $valid ) );
     }
 
     public function render_section_description() {
@@ -125,6 +206,23 @@ class Datasheet_Email_Gate_Settings {
         echo 'that will receive the document URL automatically.</p>';
         echo '<p>If your form uses <strong>double opt-in</strong>, the confirmation email will be sent ';
         echo 'by Gravity Forms before delivering the document link.</p>';
+    }
+
+    public function render_schedule_section_description() {
+        echo '<p>Optionally restrict the email gate to specific hours and days. ';
+        echo 'Outside of the scheduled times, documents will download directly without the email prompt.</p>';
+
+        // Show current server time for reference
+        $tz = get_option( 'deg_schedule_timezone', '' );
+        if ( empty( $tz ) ) {
+            $tz = wp_timezone_string();
+        }
+        try {
+            $now = new DateTime( 'now', new DateTimeZone( $tz ) );
+            echo '<p><strong>Current time in ' . esc_html( $tz ) . ':</strong> ' . $now->format( 'l, g:i A' ) . '</p>';
+        } catch ( Exception $e ) {
+            // Invalid timezone, skip display
+        }
     }
 
     /**
@@ -211,6 +309,74 @@ class Datasheet_Email_Gate_Settings {
     }
 
     /**
+     * Render schedule enable checkbox.
+     */
+    public function render_schedule_enabled_field() {
+        $enabled = get_option( 'deg_schedule_enabled', false );
+        echo '<label>';
+        echo '<input type="checkbox" name="deg_schedule_enabled" value="1" ' . checked( $enabled, true, false ) . '>';
+        echo ' Only show the email gate during scheduled hours';
+        echo '</label>';
+        echo '<p class="description">When unchecked, the email gate is active 24/7 (if enabled above). When checked, the gate only activates during the hours and days set below.</p>';
+    }
+
+    /**
+     * Render start/end time fields.
+     */
+    public function render_schedule_times_field() {
+        $start = get_option( 'deg_schedule_start', '09:00' );
+        $end   = get_option( 'deg_schedule_end', '17:00' );
+        printf(
+            '<input type="time" name="deg_schedule_start" value="%s"> to <input type="time" name="deg_schedule_end" value="%s">',
+            esc_attr( $start ),
+            esc_attr( $end )
+        );
+        echo '<p class="description">The email gate will be active between these times. Supports overnight spans (e.g. 22:00 to 06:00).</p>';
+    }
+
+    /**
+     * Render timezone selector.
+     */
+    public function render_schedule_timezone_field() {
+        $selected = get_option( 'deg_schedule_timezone', '' );
+        if ( empty( $selected ) ) {
+            $selected = wp_timezone_string();
+        }
+
+        echo '<select name="deg_schedule_timezone">';
+        echo wp_timezone_choice( $selected );
+        echo '</select>';
+        echo '<p class="description">Timezone for the schedule. Defaults to your WordPress timezone setting.</p>';
+    }
+
+    /**
+     * Render day-of-week checkboxes.
+     */
+    public function render_schedule_days_field() {
+        $saved_days = get_option( 'deg_schedule_days', array( 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun' ) );
+        $all_days = array(
+            'Mon' => 'Monday',
+            'Tue' => 'Tuesday',
+            'Wed' => 'Wednesday',
+            'Thu' => 'Thursday',
+            'Fri' => 'Friday',
+            'Sat' => 'Saturday',
+            'Sun' => 'Sunday',
+        );
+
+        foreach ( $all_days as $short => $full ) {
+            $checked = in_array( $short, $saved_days, true ) ? 'checked' : '';
+            printf(
+                '<label style="margin-right: 15px;"><input type="checkbox" name="deg_schedule_days[]" value="%s" %s> %s</label>',
+                esc_attr( $short ),
+                $checked,
+                esc_html( $full )
+            );
+        }
+        echo '<p class="description">The email gate will only be active on the selected days.</p>';
+    }
+
+    /**
      * Render the settings page.
      */
     public function render_settings_page() {
@@ -242,10 +408,57 @@ function deg_get_form_id() {
 }
 
 /**
- * Helper: check if the email gate is enabled.
+ * Helper: check if the email gate is enabled (including schedule check).
  */
 function deg_is_enabled() {
-    return (bool) get_option( 'deg_enable_gate', true ) && deg_get_form_id() > 0;
+    // Basic checks
+    if ( ! (bool) get_option( 'deg_enable_gate', true ) ) {
+        return false;
+    }
+    if ( deg_get_form_id() <= 0 ) {
+        return false;
+    }
+
+    // Schedule check
+    if ( (bool) get_option( 'deg_schedule_enabled', false ) ) {
+        $tz_string = get_option( 'deg_schedule_timezone', '' );
+        if ( empty( $tz_string ) ) {
+            $tz_string = wp_timezone_string();
+        }
+
+        try {
+            $tz  = new DateTimeZone( $tz_string );
+            $now = new DateTime( 'now', $tz );
+        } catch ( Exception $e ) {
+            return true; // If timezone is invalid, don't block — stay enabled
+        }
+
+        // Check day of week
+        $active_days = get_option( 'deg_schedule_days', array( 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun' ) );
+        $today = $now->format( 'D' );
+        if ( ! in_array( $today, $active_days, true ) ) {
+            return false;
+        }
+
+        // Check time window
+        $start_str = get_option( 'deg_schedule_start', '09:00' );
+        $end_str   = get_option( 'deg_schedule_end', '17:00' );
+        $current   = $now->format( 'H:i' );
+
+        if ( $start_str <= $end_str ) {
+            // Normal range (e.g. 09:00 to 17:00)
+            if ( $current < $start_str || $current >= $end_str ) {
+                return false;
+            }
+        } else {
+            // Overnight range (e.g. 22:00 to 06:00)
+            if ( $current < $start_str && $current >= $end_str ) {
+                return false;
+            }
+        }
+    }
+
+    return true;
 }
 
 /**
