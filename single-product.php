@@ -1,9 +1,9 @@
 <?php get_header(); ?>
 
 <div class="product-detail-container">
-	<?php if ( function_exists( 'abs_breadcrumbs_output' ) ) abs_breadcrumbs_output(); ?>
+    <?php if ( function_exists( 'abs_breadcrumbs_output' ) ) abs_breadcrumbs_output(); ?>
     <section class="section top-section">
-        <div class="section-content">
+            <div class="section-content">
             <div class="image-document-column">
                 <?php
                 $listing_image = get_field('listing_image');
@@ -12,9 +12,9 @@
                     ?>
                         <div class="single-slide">
                             <img class="single-slide-image" src="<?php echo esc_url($listing_image['url']); ?>" alt="<?php echo esc_attr($listing_image['alt']); ?>" title="<?php echo esc_attr($listing_image['title']); ?>">
-                            
+
                             <?php if( have_rows('related_images') ): ?>
-                                <?php while( have_rows('related_images') ): the_row(); 
+                                <?php while( have_rows('related_images') ): the_row();
                                     $image = get_sub_field('image');
                                     if( $image ): ?>
                                         <img class="single-slide-image" src="<?php echo esc_url($image['url']); ?>" alt="<?php echo esc_attr($image['alt']); ?>" title="<?php echo esc_attr($image['title']); ?>">
@@ -29,7 +29,7 @@
                             </div>
 
                             <?php if( have_rows('related_images') ): ?>
-                                <?php while( have_rows('related_images') ): the_row(); 
+                                <?php while( have_rows('related_images') ): the_row();
                                     $image = get_sub_field('image');
                                     if( $image ): ?>
                                         <div class="image-thumbnail">
@@ -248,24 +248,16 @@
                 })();
                 </script>
                 <?php endif; ?>
+
+				<?php echo do_shortcode('[abs_email_datasheet_button]'); ?>
             </div>
             <div class="title-description-column">
                 <h1 class="product-title"><?php the_field('product_title'); ?></h1>
-                <div class="product-number"> Product Number: <span><?php the_field('product_id'); ?></span>
-                    <?php if (get_field('is_new_product')) : ?>
-                        <span class="new-product-badge"><span class="star">★</span> NEW PRODUCT</span>
-                    <?php endif; ?>
-					<?php if ( function_exists( 'abs_available_sizes_output' ) ) abs_available_sizes_output(); ?>
-                </div>
-				
+                <div class="product-number">Product Number: <span><?php the_field('product_id'); ?></span></div>
                 <div class="product-summary"><?php the_field('summary'); ?></div>
-				
+
 				<?php echo do_shortcode('[quote_button]'); ?>
-				
-                <div class="product-quote">
-                    <?php /*<a href="/request-a-quote" class="product-quote-button button">Request a Quote</a>*/ ?>
-					<a href="#product_inquiry_div" class="i_scroll_to product_inquiry_button button is-outline primary">Product Inquiry</a>
-                </div>
+
             </div>
         </div>
     </section>
@@ -297,58 +289,6 @@
                         </div>
                     </div>
                 </div>
-				
-					<?php
-		$related_products = get_field('related_products');
-
-		if ( $related_products ) : ?>
-			<section class="section related-products-section">
-				<div class="section-content">
-					<h2 class="related-products-title">Related Products</h2>
-
-					<div class="related-products-carousel">
-						<?php foreach ( $related_products as $post ) : setup_postdata( $post ); ?>
-							<?php
-								$listing_image = get_field('listing_image');
-								$product_id    = get_field('product_id');
-							?>
-							<div class="related-product-item">
-								<a href="<?php the_permalink(); ?>" class="related-product-link">
-									<div class="related-product-image-wrap">
-										<?php if ( $listing_image ) : ?>
-											<img src="<?php echo esc_url( $listing_image['sizes']['icetro-251'] ?? $listing_image['url'] ); ?>"
-												 alt="<?php echo esc_attr( $listing_image['alt'] ); ?>">
-										<?php endif; ?>
-									</div>
-									<div class="related-product-content">
-										<div class="related-product-title"><?php the_title(); ?></div>
-										<?php if ( $product_id ) : ?>
-											<div class="related-product-number">Product Number: <span><?php echo esc_html( $product_id ); ?></span></div>
-										<?php endif; ?>
-									</div>
-								</a>
-							</div>
-						<?php endforeach; ?>
-						<?php wp_reset_postdata(); ?>
-					</div>
-				</div>
-			</section>
-		<?php endif; ?>
-				
-				
-                <div class="col small-12 large-12">
-                    <div class="col-inner">
-					<?php
-					//if( $_SERVER['REMOTE_ADDR'] == '5.77.201.39' ){}
-					?>
-						<div id="product_inquiry_div" class="product_inquiry_div">
-						<h2>Inquire About This Product</h2>
-						<?php 
-						echo do_shortcode('[gravityform id="5" title="false" description="false" ajax="false"]');
-						?>
-						</div>
-					</div>
-				</div>
             </div>
         </div>
     </section>
