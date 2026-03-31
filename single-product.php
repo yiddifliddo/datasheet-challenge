@@ -248,8 +248,6 @@
                 })();
                 </script>
                 <?php endif; ?>
-
-				<?php echo do_shortcode('[abs_email_datasheet_button]'); ?>
             </div>
             <div class="title-description-column">
                 <h1 class="product-title"><?php the_field('product_title'); ?></h1>
