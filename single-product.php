@@ -203,6 +203,35 @@
                         text-align: center;
                         padding: 20px 0;
                     }
+                    /* Mobile responsive */
+                    @media (max-width: 600px) {
+                        .document-email-modal-content {
+                            padding: 30px 20px 25px;
+                            width: 95%;
+                            max-height: 90vh;
+                            overflow-y: auto;
+                        }
+                        .document-email-modal-content h3 {
+                            font-size: 17px;
+                        }
+                        .document-email-modal-content .gform_wrapper .gfield--width-half,
+                        .document-email-modal-content .gform_wrapper .gfield--width-third {
+                            grid-column: span 12 !important;
+                            flex-basis: 100% !important;
+                            max-width: 100% !important;
+                        }
+                        .document-email-modal-content .gform_wrapper .ginput_complex {
+                            display: flex !important;
+                            flex-direction: column !important;
+                        }
+                        .document-email-modal-content .gform_wrapper .ginput_complex .ginput_left,
+                        .document-email-modal-content .gform_wrapper .ginput_complex .ginput_right,
+                        .document-email-modal-content .gform_wrapper .ginput_complex > span {
+                            width: 100% !important;
+                            padding: 0 !important;
+                            margin-bottom: 10px;
+                        }
+                    }
                     .document-email-modal-content iframe[name*="gform_ajax_frame"] {
                         display: none !important;
                         width: 0;
