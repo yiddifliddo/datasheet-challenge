@@ -203,6 +203,12 @@
                         text-align: center;
                         padding: 20px 0;
                     }
+                    .document-email-modal-content iframe[name*="gform_ajax_frame"] {
+                        display: none !important;
+                        width: 0;
+                        height: 0;
+                        overflow: hidden;
+                    }
                 </style>
 
                 <script>
