@@ -109,30 +109,96 @@
                         left: 0;
                         width: 100%;
                         height: 100%;
-                        background: rgba(0,0,0,0.6);
+                        background: rgba(0,0,0,0.45);
                     }
                     .document-email-modal-content {
                         position: relative;
-                        background: #fff;
-                        padding: 30px;
-                        border-radius: 8px;
-                        max-width: 500px;
+                        background: #ffffff;
+                        padding: 40px 35px 35px;
+                        border-radius: 4px;
+                        max-width: 480px;
                         width: 90%;
                         z-index: 1;
+                        box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+                        border-top: 3px solid #0078BF;
+                    }
+                    .document-email-modal-content h3 {
+                        color: #333333;
+                        font-size: 20px;
+                        font-weight: 700;
+                        margin: 0 0 8px;
+                        line-height: 1.3;
                     }
                     .document-email-modal-close {
                         position: absolute;
-                        top: 10px;
+                        top: 12px;
                         right: 15px;
                         background: none;
                         border: none;
-                        font-size: 24px;
+                        font-size: 22px;
                         cursor: pointer;
+                        color: #999;
+                        transition: color 0.2s;
+                    }
+                    .document-email-modal-close:hover {
                         color: #333;
                     }
                     .document-email-modal-label {
                         font-weight: 600;
-                        margin-bottom: 15px;
+                        color: #0078BF;
+                        font-size: 14px;
+                        margin-bottom: 20px;
+                    }
+                    /* Gravity Form overrides inside the modal */
+                    .document-email-modal-content .gform_wrapper input[type="email"],
+                    .document-email-modal-content .gform_wrapper input[type="text"] {
+                        border: 1px solid #ddd;
+                        border-radius: 3px;
+                        padding: 10px 12px;
+                        font-size: 14px;
+                        width: 100%;
+                        color: #333;
+                        background: #f9f9f9;
+                    }
+                    .document-email-modal-content .gform_wrapper input[type="email"]:focus,
+                    .document-email-modal-content .gform_wrapper input[type="text"]:focus {
+                        border-color: #0078BF;
+                        outline: none;
+                        background: #fff;
+                    }
+                    .document-email-modal-content .gform_wrapper .gform_button,
+                    .document-email-modal-content .gform_wrapper input[type="submit"] {
+                        background: #0078BF;
+                        color: #ffffff;
+                        border: none;
+                        border-radius: 3px;
+                        padding: 12px 28px;
+                        font-size: 14px;
+                        font-weight: 600;
+                        cursor: pointer;
+                        text-transform: uppercase;
+                        letter-spacing: 0.5px;
+                        transition: background 0.2s;
+                        width: 100%;
+                    }
+                    .document-email-modal-content .gform_wrapper .gform_button:hover,
+                    .document-email-modal-content .gform_wrapper input[type="submit"]:hover {
+                        background: #005f99;
+                    }
+                    .document-email-modal-content .gform_wrapper .gfield_label {
+                        color: #333;
+                        font-size: 13px;
+                        font-weight: 600;
+                    }
+                    .document-email-modal-content .gform_wrapper .validation_message {
+                        color: #cc0000;
+                        font-size: 12px;
+                    }
+                    .document-email-modal-content .gform_confirmation_message {
+                        color: #333;
+                        font-size: 15px;
+                        text-align: center;
+                        padding: 20px 0;
                     }
                 </style>
 
