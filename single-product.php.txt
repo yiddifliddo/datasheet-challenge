@@ -67,6 +67,8 @@
                         </div>
                     </div>
                 <?php endif; ?>
+
+                <?php if ( function_exists( 'abs_datasheet_sms_form' ) ) abs_datasheet_sms_form(); ?>
             </div>
             <div class="title-description-column">
                 <h1 class="product-title"><?php the_field('product_title'); ?></h1>
