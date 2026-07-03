@@ -1,0 +1,320 @@
+/*
+ * Click to Call (Twilio) — front-end styles.
+ * Fully self-contained and scoped under .ctc-* so nothing here touches the theme
+ * and the theme cannot bleed into the button or pop-up.
+ */
+
+/* ---------- Button ---------- */
+.ctc-wrap {
+	max-width: 100%;
+}
+
+.ctc-button {
+	-webkit-appearance: none;
+	appearance: none;
+	box-sizing: border-box;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 0.5em;
+	margin: 0;
+	cursor: pointer;
+	text-decoration: none;
+	border: 0;
+	line-height: 1.2;
+	white-space: nowrap;
+	font-family: var(--ctc-font, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif);
+	font-size: var(--ctc-size, 16px);
+	font-weight: var(--ctc-weight, 600);
+	color: var(--ctc-color, #ffffff);
+	background: var(--ctc-bg, #0b5cff);
+	border-radius: var(--ctc-radius, 8px);
+	padding: var(--ctc-pad-y, 12px) var(--ctc-pad-x, 22px);
+	transition: background-color 0.15s ease, color 0.15s ease, transform 0.05s ease, box-shadow 0.15s ease;
+}
+
+.ctc-button:hover,
+.ctc-button:focus-visible {
+	background: var(--ctc-hover-bg, var(--ctc-bg, #0b5cff));
+	color: var(--ctc-hover-color, var(--ctc-color, #ffffff));
+}
+
+.ctc-button:focus-visible {
+	outline: 3px solid rgba(11, 92, 255, 0.45);
+	outline-offset: 2px;
+}
+
+.ctc-button:active {
+	transform: translateY(1px);
+}
+
+.ctc-button--full {
+	width: 100%;
+}
+
+.ctc-button__icon {
+	flex: 0 0 auto;
+	width: 1em;
+	height: 1em;
+}
+
+.ctc-button__label {
+	display: inline-block;
+}
+
+/* ---------- Footer placements ---------- */
+.ctc-wrap--float {
+	position: fixed;
+	bottom: 24px;
+	z-index: 2147482000;
+	margin: 0;
+}
+
+.ctc-wrap--float-right {
+	right: 24px;
+}
+
+.ctc-wrap--float-left {
+	left: 24px;
+}
+
+.ctc-wrap--float .ctc-button {
+	box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+}
+
+.ctc-wrap--bar {
+	width: 100%;
+	padding: 16px;
+	text-align: center;
+	box-sizing: border-box;
+}
+
+/* ---------- Modal ---------- */
+.ctc-modal {
+	position: fixed;
+	inset: 0;
+	z-index: 2147483000;
+	display: none;
+	align-items: center;
+	justify-content: center;
+	padding: 16px;
+	box-sizing: border-box;
+}
+
+.ctc-modal.is-open {
+	display: flex;
+}
+
+.ctc-modal *,
+.ctc-modal *::before,
+.ctc-modal *::after {
+	box-sizing: border-box;
+}
+
+.ctc-modal__backdrop {
+	position: absolute;
+	inset: 0;
+	background: rgba(15, 23, 42, 0.55);
+	backdrop-filter: saturate(120%) blur(2px);
+}
+
+.ctc-modal__dialog {
+	position: relative;
+	width: 100%;
+	max-width: 420px;
+	background: #ffffff;
+	color: #111827;
+	border-radius: 14px;
+	box-shadow: 0 24px 60px rgba(0, 0, 0, 0.35);
+	padding: 26px 24px 24px;
+	font-family: var(--ctc-font, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif);
+	font-size: 16px;
+	line-height: 1.5;
+	animation: ctc-pop 0.16s ease-out;
+}
+
+@keyframes ctc-pop {
+	from { transform: translateY(8px) scale(0.98); opacity: 0; }
+	to   { transform: translateY(0) scale(1); opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.ctc-modal__dialog { animation: none; }
+	.ctc-button { transition: none; }
+}
+
+.ctc-modal__close {
+	position: absolute;
+	top: 10px;
+	right: 12px;
+	width: 34px;
+	height: 34px;
+	border: 0;
+	background: transparent;
+	color: #6b7280;
+	font-size: 26px;
+	line-height: 1;
+	cursor: pointer;
+	border-radius: 8px;
+}
+
+.ctc-modal__close:hover {
+	background: #f3f4f6;
+	color: #111827;
+}
+
+.ctc-modal__title {
+	margin: 0 0 6px;
+	padding: 0;
+	font-size: 22px;
+	font-weight: 700;
+	color: #111827;
+}
+
+.ctc-modal__intro {
+	margin: 0 0 16px;
+	padding: 0;
+	color: #4b5563;
+	font-size: 15px;
+}
+
+.ctc-field {
+	display: block;
+	margin: 0 0 14px;
+}
+
+.ctc-field__label {
+	display: block;
+	margin-bottom: 6px;
+	font-size: 14px;
+	font-weight: 600;
+	color: #374151;
+}
+
+.ctc-field__input {
+	width: 100%;
+	padding: 12px 14px;
+	font-size: 16px;
+	color: #111827;
+	background: #ffffff;
+	border: 1.5px solid #d1d5db;
+	border-radius: 10px;
+	transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.ctc-field__input:focus {
+	outline: none;
+	border-color: #0b5cff;
+	box-shadow: 0 0 0 3px rgba(11, 92, 255, 0.18);
+}
+
+.ctc-field__input.ctc-invalid {
+	border-color: #dc2626;
+	box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.15);
+}
+
+/* Honeypot — visually hidden, kept out of the tab order. */
+.ctc-hp {
+	position: absolute !important;
+	left: -9999px !important;
+	width: 1px;
+	height: 1px;
+	opacity: 0;
+	pointer-events: none;
+}
+
+.ctc-consent {
+	display: flex;
+	align-items: flex-start;
+	gap: 9px;
+	margin: 0 0 16px;
+	font-size: 13px;
+	color: #4b5563;
+	cursor: pointer;
+}
+
+.ctc-consent__box {
+	margin: 2px 0 0;
+	flex: 0 0 auto;
+	width: 16px;
+	height: 16px;
+	accent-color: #0b5cff;
+}
+
+.ctc-consent__text {
+	display: block;
+}
+
+.ctc-submit {
+	-webkit-appearance: none;
+	appearance: none;
+	width: 100%;
+	padding: 13px 16px;
+	font-size: 16px;
+	font-weight: 700;
+	font-family: inherit;
+	color: #ffffff;
+	background: #0b5cff;
+	border: 0;
+	border-radius: 10px;
+	cursor: pointer;
+	transition: background-color 0.15s ease, opacity 0.15s ease;
+}
+
+.ctc-submit:hover {
+	background: #0949cc;
+}
+
+.ctc-submit:disabled {
+	opacity: 0.65;
+	cursor: default;
+}
+
+.ctc-message {
+	display: none;
+	margin: 0 0 12px;
+	padding: 10px 12px;
+	border-radius: 9px;
+	font-size: 14px;
+	background: #fef2f2;
+	color: #b91c1c;
+	border: 1px solid #fecaca;
+}
+
+.ctc-message.is-visible {
+	display: block;
+}
+
+.ctc-success {
+	text-align: center;
+	padding: 8px 4px;
+}
+
+.ctc-success__icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 56px;
+	height: 56px;
+	margin: 4px auto 12px;
+	border-radius: 50%;
+	background: #dcfce7;
+	color: #16a34a;
+}
+
+.ctc-success__text {
+	margin: 0;
+	font-size: 16px;
+	color: #111827;
+}
+
+.ctc-noscroll {
+	overflow: hidden !important;
+}
+
+@media (max-width: 480px) {
+	.ctc-modal__dialog { padding: 22px 18px 20px; }
+	.ctc-wrap--float { bottom: 16px; }
+	.ctc-wrap--float-right { right: 16px; }
+	.ctc-wrap--float-left { left: 16px; }
+}
